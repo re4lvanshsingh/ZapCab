@@ -60,15 +60,19 @@ const Map = () => {
     useEffect(()=>{
         if((!origin) || (!destination))return;
 
-        const getTravelTime = async() =>{
-            fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin.description}&destinations=${destination.description}&key=${GOOGLE_MAPS_APIKEY}`)
-            .then(res=>res.json())
-            .then((data)=>{
+        const getTravelTime = async () => {
+            const originLatLng = `${origin.location.lat},${origin.location.lng}`;
+            const destinationLatLng = `${destination.location.lat},${destination.location.lng}`;
+          
+            fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${originLatLng}&destinations=${destinationLatLng}&key=${GOOGLE_MAPS_APIKEY}`)
+              .then(res => res.json())
+              .then((data) => {
                 // for debugging purposes only:
                 // console.log(data);
                 dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
             })
         };
+          
 
         getTravelTime();
     },[origin,destination,GOOGLE_MAPS_APIKEY])
@@ -89,12 +93,12 @@ const Map = () => {
         
         {origin && destination && (
             <MapViewDirections
-            origin={origin.description}
-            destination={destination.description}
+            origin={{ latitude: origin.location.lat, longitude: origin.location.lng }}
+            destination={{ latitude: destination.location.lat, longitude: destination.location.lng }}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeColor='black'
             strokeWidth={3}
-            />
+          />
         )}
 
         {/*Display nearby drivers*/}
